@@ -1,5 +1,4 @@
 steps:
-  # Step 1: Install dependencies
   - name: "gcr.io/cloud-builders/npm"
     entrypoint: bash
     args:
@@ -16,7 +15,6 @@ steps:
       - name: "npm-cache"
         path: /root/.npm
 
-  # Step 2: Build frontend dengan injeksi VITE_API_URL
   - name: "gcr.io/cloud-builders/npm"
     entrypoint: bash
     args:
@@ -28,7 +26,6 @@ steps:
       - name: "npm-cache"
         path: /root/.npm
 
-  # Step 3: Deploy ke App Engine
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud
     args: ["app", "deploy", "--quiet"]
