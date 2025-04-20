@@ -1,5 +1,5 @@
 runtime: nodejs20
-service: frontend-service
+service: frontend-197
 instance_class: F1
 
 handlers:
