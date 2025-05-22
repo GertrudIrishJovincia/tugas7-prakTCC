@@ -1,9 +1,14 @@
-import { Sequelize } from "sequelize";
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
-const db = new Sequelize('crud_tugas2', 'root', 'irish@irisH10',{
-    host: '34.57.51.107',
-    dialect: 'mysql',
-    timezone: "+07:00"
-});
+const db = new Sequelize(
+  process.env.DB_NAME,     
+  process.env.DB_USER,     
+  process.env.DB_PASSWORD, 
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+  }
+);
 
-export default db;
+module.exports = db;
