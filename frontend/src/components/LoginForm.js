@@ -1,70 +1,101 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils";
+import { useNavigate, Link } from "react-router-dom";
+import 'bulma/css/bulma.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const LoginForm = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
+    setMessage("");
     try {
-      const response = await axios.post(`${BASE_URL}/login`, { username, password });
-      // Simpan token ke localStorage (atau state management)
-      localStorage.setItem("token", response.data.token);
-      navigate("/");
-    } catch (error) {
-      setErrorMsg(error.response?.data?.error || "Login gagal");
+      const res = await axios.post(`${BASE_URL}/login`, formData);
+      localStorage.setItem("token", res.data.token);
+      setMessage("Login berhasil! Mengarahkan...");
+      setIsError(false);
+      setTimeout(() => navigate("/users"), 1000);
+    } catch (err) {
+      setMessage(err.response?.data?.error || "Login gagal");
+      setIsError(true);
     }
   };
 
   return (
-    <div className="columns is-centered mt-5">
-      <div className="column is-one-third">
-        <form onSubmit={handleLogin}>
-          <h1 className="title has-text-centered">Login</h1>
-          {errorMsg && (
-            <div className="notification is-danger">{errorMsg}</div>
-          )}
+    <div className="container is-max-desktop mt-6">
+      <div className="box p-6">
+        <h2 className="title is-3 has-text-centered has-text-link">
+          <i className="fas fa-sign-in-alt mr-2"></i> Login
+        </h2>
+
+        {message && (
+          <div className={`notification ${isError ? "is-danger" : "is-success"}`}>
+            {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
           <div className="field">
             <label className="label">Username</label>
-            <div className="control">
+            <div className="control has-icons-left">
               <input
-                type="text"
                 className="input"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="text"
+                name="username"
+                placeholder="Masukkan username"
+                value={formData.username}
+                onChange={handleChange}
                 required
                 autoFocus
               />
+              <span className="icon is-small is-left">
+                <i className="fas fa-user"></i>
+              </span>
             </div>
           </div>
 
           <div className="field">
             <label className="label">Password</label>
-            <div className="control">
+            <div className="control has-icons-left">
               <input
-                type="password"
                 className="input"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                name="password"
+                placeholder="Masukkan password"
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
+              <span className="icon is-small is-left">
+                <i className="fas fa-lock"></i>
+              </span>
             </div>
           </div>
 
           <div className="field mt-5">
-            <button type="submit" className="button is-success is-fullwidth">
+            <button className="button is-link is-fullwidth" type="submit">
               Login
             </button>
           </div>
         </form>
+
+        <div className="has-text-centered mt-4">
+          <p>
+            Belum punya akun?{" "}
+            <Link to="/register" className="has-text-link has-text-weight-semibold">
+              Register di sini
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
