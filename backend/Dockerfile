@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install --production
 
 COPY . .
-COPY .env . 
+COPY .env .
 
 EXPOSE 8080
-CMD ["npm""start"]
+CMD ["npm", "start"]

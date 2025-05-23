@@ -3,13 +3,12 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 
-const db = require("./config/Database"); // ⬅️ koneksi database
+const db = require("./config/Database");
 const authRoutes = require("./routes/AuthRoute");
 const userRoutes = require("./routes/UserRoute");
 
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "PATCH", "DELETE"],
@@ -18,11 +17,9 @@ app.use(cors({
 
 app.use(express.json());
 
-// Routing
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
-// Tes koneksi database
 (async () => {
   try {
     await db.authenticate();
@@ -32,8 +29,8 @@ app.use("/api/users", userRoutes);
   }
 })();
 
-// Jalankan server
-const PORT = parseInt(process.env.PORT) || 8080;
+const PORT = process.env.PORT || 8080;
+
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
