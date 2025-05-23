@@ -7,5 +7,5 @@ RUN npm install --production
 COPY . .
 COPY .env .
 
-EXPOSE 8080
+EXPOSE 3000
 CMD ["npm", "start"]
