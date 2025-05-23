@@ -1,10 +1,10 @@
 const User = require("../models/UserModel");
 
-// Ambil semua catatan (note)
+// Ambil semua catatan
 exports.getNotes = async (req, res) => {
   try {
-    const response = await User.findAll();
-    res.status(200).json(response);
+    const notes = await User.findAll({ order: [["createdAt", "DESC"]] });
+    res.status(200).json(notes);
   } catch (error) {
     console.error("GET notes error:", error);
     res.status(500).json({ error: "Terjadi kesalahan saat mengambil data catatan." });
@@ -28,8 +28,14 @@ exports.getNoteById = async (req, res) => {
 // Tambah catatan baru
 exports.createNote = async (req, res) => {
   try {
-    await User.create(req.body);
-    res.status(201).json({ message: "Catatan berhasil dibuat." });
+    const { date, title, content } = req.body;
+
+    if (!title || !content) {
+      return res.status(400).json({ error: "Judul dan isi catatan wajib diisi." });
+    }
+
+    const newNote = await User.create({ date, title, content });
+    res.status(201).json({ message: "Catatan berhasil dibuat.", note: newNote });
   } catch (error) {
     console.error("Create note error:", error);
     res.status(500).json({ error: "Gagal membuat catatan." });
@@ -39,10 +45,17 @@ exports.createNote = async (req, res) => {
 // Update catatan berdasarkan ID
 exports.updateNote = async (req, res) => {
   try {
-    const [updated] = await User.update(req.body, { where: { id: req.params.id } });
+    const { date, title, content } = req.body;
+
+    const [updated] = await User.update(
+      { date, title, content },
+      { where: { id: req.params.id } }
+    );
+
     if (!updated) {
       return res.status(404).json({ error: "Catatan tidak ditemukan." });
     }
+
     res.status(200).json({ message: "Catatan berhasil diperbarui." });
   } catch (error) {
     console.error("Update note error:", error);
@@ -54,9 +67,11 @@ exports.updateNote = async (req, res) => {
 exports.deleteNote = async (req, res) => {
   try {
     const deleted = await User.destroy({ where: { id: req.params.id } });
+
     if (!deleted) {
       return res.status(404).json({ error: "Catatan tidak ditemukan." });
     }
+
     res.status(200).json({ message: "Catatan berhasil dihapus." });
   } catch (error) {
     console.error("Delete note error:", error);
