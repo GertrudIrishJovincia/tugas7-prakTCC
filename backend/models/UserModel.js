@@ -44,4 +44,4 @@ if (process.env.NODE_ENV !== "production") {
   })();
 }
 
-export default User;
+module.exports = User;
