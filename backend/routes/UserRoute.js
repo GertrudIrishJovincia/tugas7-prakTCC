@@ -1,30 +1,22 @@
-const express = require("express");
-const verifyToken = require("../middleware/verifyToken");
-const {
+import express from "express";
+import {
   getNotes,
   getNoteById,
   createNote,
   updateNote,
   deleteNote,
-} = require("../controllers/UserController");
+} from "../controllers/UserController.js";
+import verifyToken from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-// ========== ROUTE UNTUK MANAJEMEN CATATAN ==========
+// Semua route ini butuh verifikasi token (autentikasi)
+router.use(verifyToken);
 
-// 📥 GET semua catatan (public)
 router.get("/", getNotes);
-
-// 🔎 GET satu catatan berdasarkan ID (public)
 router.get("/:id", getNoteById);
+router.post("/", createNote);
+router.patch("/:id", updateNote);
+router.delete("/:id", deleteNote);
 
-// ➕ POST buat catatan baru (butuh login)
-router.post("/", verifyToken, createNote);
-
-// ✏️ PATCH update catatan berdasarkan ID (butuh login)
-router.patch("/:id", verifyToken, updateNote);
-
-// 🗑 DELETE hapus catatan berdasarkan ID (butuh login)
-router.delete("/:id", verifyToken, deleteNote);
-
-module.exports = router;
+export default router;

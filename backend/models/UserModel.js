@@ -28,15 +28,14 @@ const User = db.define(
   },
   {
     freezeTableName: true,
-    timestamps: true, // otomatis createdAt & updatedAt
+    timestamps: true,
   }
 );
 
-// Sync hanya di development agar tidak ganggu production
 if (process.env.NODE_ENV !== "production") {
   (async () => {
     try {
-      await db.sync({ alter: true }); // pakai alter agar update struktur tabel jika ada perubahan
+      await db.sync({ alter: true });
       console.log("✅ users table synced");
     } catch (err) {
       console.error("❌ Sync error:", err);

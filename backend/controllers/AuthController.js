@@ -1,10 +1,11 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const db = require("../config/Database");
-const { QueryTypes } = require("sequelize");
-require("dotenv").config();
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import db from "../config/Database.js";
+import { QueryTypes } from "sequelize";
+import dotenv from "dotenv";
+dotenv.config();
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: "Username dan password wajib diisi" });
@@ -16,7 +17,7 @@ exports.register = async (req, res) => {
       "INSERT INTO admin (username, password, createdAt, updatedAt) VALUES (?, ?, NOW(), NOW())",
       {
         replacements: [username, hashedPassword],
-        type: db.QueryTypes.INSERT,
+        type: QueryTypes.INSERT,
       }
     );
 
@@ -30,7 +31,7 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: "Username dan password wajib diisi" });
@@ -61,6 +62,6 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.logout = (req, res) => {
+export const logout = (req, res) => {
   res.json({ message: "Logout berhasil, sesi berakhir" });
 };

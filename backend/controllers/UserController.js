@@ -1,29 +1,19 @@
-const User = require("../models/UserModel");
+import User from "../models/UserModel.js";
 
-// Ambil semua catatan
-exports.getNotes = async (req, res) => {
+export const getNotes = async (req, res) => {
   try {
     const notes = await User.findAll({ order: [["createdAt", "DESC"]] });
     res.status(200).json(notes);
   } catch (error) {
-    console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
-    console.log("🔥 ERROR getNotes()");
-    console.log("🔥 message:", error.message);
-    console.log("🔥 stack:", error.stack);
-    console.log("🔥 full error:", JSON.stringify(error, null, 2));
-    console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
+    console.error("ERROR getNotes:", error);
     res.status(500).json({ error: "Terjadi kesalahan saat mengambil data catatan." });
   }
 };
 
-
-// Ambil catatan berdasarkan ID
-exports.getNoteById = async (req, res) => {
+export const getNoteById = async (req, res) => {
   try {
     const note = await User.findOne({ where: { id: req.params.id } });
-    if (!note) {
-      return res.status(404).json({ error: "Catatan tidak ditemukan." });
-    }
+    if (!note) return res.status(404).json({ error: "Catatan tidak ditemukan." });
     res.status(200).json(note);
   } catch (error) {
     console.error("GET note by ID error:", error);
@@ -31,8 +21,7 @@ exports.getNoteById = async (req, res) => {
   }
 };
 
-// Tambah catatan baru
-exports.createNote = async (req, res) => {
+export const createNote = async (req, res) => {
   try {
     const { date, title, content } = req.body;
 
@@ -48,8 +37,7 @@ exports.createNote = async (req, res) => {
   }
 };
 
-// Update catatan berdasarkan ID
-exports.updateNote = async (req, res) => {
+export const updateNote = async (req, res) => {
   try {
     const { date, title, content } = req.body;
 
@@ -58,9 +46,7 @@ exports.updateNote = async (req, res) => {
       { where: { id: req.params.id } }
     );
 
-    if (!updated) {
-      return res.status(404).json({ error: "Catatan tidak ditemukan." });
-    }
+    if (!updated) return res.status(404).json({ error: "Catatan tidak ditemukan." });
 
     res.status(200).json({ message: "Catatan berhasil diperbarui." });
   } catch (error) {
@@ -69,14 +55,11 @@ exports.updateNote = async (req, res) => {
   }
 };
 
-// Hapus catatan berdasarkan ID
-exports.deleteNote = async (req, res) => {
+export const deleteNote = async (req, res) => {
   try {
     const deleted = await User.destroy({ where: { id: req.params.id } });
 
-    if (!deleted) {
-      return res.status(404).json({ error: "Catatan tidak ditemukan." });
-    }
+    if (!deleted) return res.status(404).json({ error: "Catatan tidak ditemukan." });
 
     res.status(200).json({ message: "Catatan berhasil dihapus." });
   } catch (error) {
