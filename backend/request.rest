@@ -3,7 +3,7 @@ POST https://notes-backend197-174534490336.us-central1.run.app/api/auth/register
 Content-Type: application/json
 
 {
-  "username": "admin2",
+  "username": "admin32",
   "password": "admin123"
 }
 
