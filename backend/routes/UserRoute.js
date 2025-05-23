@@ -1,22 +1,22 @@
-const express      = require("express");
-const verifyToken  = require("../middleware/verifyToken"); // ← pakai jika mau proteksi
+const express = require("express");
+const verifyToken = require("../middleware/verifyToken");
 const {
-  getUsers,
-  getUsersById,
-  createUser,
-  updateUser,
-  deleteUser,
+  getNotes,
+  getNoteById,
+  createNote,
+  updateNote,
+  deleteNote,
 } = require("../controllers/UserController");
 
 const router = express.Router();
 
-// ---------- PUBLIC (atau tetap bisa diproteksi terserah) ----------
-router.get("/", getUsers);
-router.get("/:id", getUsersById);
+// ---------- PUBLIC ----------
+router.get("/", getNotes);
+router.get("/:id", getNoteById);
 
-// ---------- PROTEKSI DENGAN JWT ----------
-router.post("/", verifyToken, createUser);
-router.patch("/:id", verifyToken, updateUser);
-router.delete("/:id", verifyToken, deleteUser);
+// ---------- PROTECTED ----------
+router.post("/", verifyToken, createNote);
+router.patch("/:id", verifyToken, updateNote);
+router.delete("/:id", verifyToken, deleteNote);
 
 module.exports = router;

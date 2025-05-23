@@ -1,3 +1,30 @@
+### 📌 REGISTER Admin (tabel admin)
+POST https://notes-backend197-174534490336.us-central1.run.app/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+
+### 🔐 LOGIN Admin (untuk mendapatkan token)
+POST https://notes-backend197-174534490336.us-central1.run.app/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+
+### 🔑 GANTI TOKEN DI SINI SETELAH LOGIN
+@token=PASTE_TOKEN_DISINI
+
+###
+
 GET https://notes-backend197-174534490336.us-central1.run.app/api/users
 
 ###
@@ -23,3 +50,72 @@ Content-Type: application/json
 
 ###
 DELETE  http://localhost:5000/users/1
+
+### 📌 REGISTER Admin (tabel admin)
+POST https://backend-service-122089089856.us-central1.run.app/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+
+### 🔐 LOGIN Admin (untuk mendapatkan token)
+POST https://backend-service-122089089856.us-central1.run.app/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+
+### 🔑 GANTI TOKEN DI SINI SETELAH LOGIN
+@token=PASTE_TOKEN_DISINI
+
+###
+
+### 📥 GET Semua Catatan (tabel users)
+GET https://backend-service-122089089856.us-central1.run.app/api/users
+Authorization: Bearer {{token}}
+
+###
+
+### 🔍 GET Detail Catatan by ID
+GET https://backend-service-122089089856.us-central1.run.app/api/users/15
+Authorization: Bearer {{token}}
+
+###
+
+### ➕ POST Catatan Baru
+POST https://backend-service-122089089856.us-central1.run.app/api/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "author": "Damai",
+  "about": "Daily",
+  "note": "Hari ini saya akan belajar fullstack development"
+}
+
+###
+
+### ✏️ PATCH / Update Catatan dengan ID=15
+PATCH https://backend-service-122089089856.us-central1.run.app/api/users/15
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "author": "Damai Updated",
+  "about": "Updated Daily",
+  "note": "Ini hasil update data catatan"
+}
+
+###
+
+### ❌ DELETE Catatan dengan ID=14
+DELETE https://backend-service-122089089856.us-central1.run.app/api/users/14
+Authorization: Bearer {{token}}
