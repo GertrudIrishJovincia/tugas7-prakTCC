@@ -6,9 +6,12 @@ exports.getNotes = async (req, res) => {
     const notes = await User.findAll({ order: [["createdAt", "DESC"]] });
     res.status(200).json(notes);
   } catch (error) {
-    console.error("GET notes error:", error.message);
-    console.error("FULL ERROR OBJECT:", error);
-    console.error("STACK TRACE:", error.stack);
+    console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
+    console.log("🔥 ERROR getNotes()");
+    console.log("🔥 message:", error.message);
+    console.log("🔥 stack:", error.stack);
+    console.log("🔥 full error:", JSON.stringify(error, null, 2));
+    console.log("🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥");
     res.status(500).json({ error: "Terjadi kesalahan saat mengambil data catatan." });
   }
 };
