@@ -28,15 +28,15 @@ const User = db.define(
   },
   {
     freezeTableName: true,
-    timestamps: true, // akan otomatis isi createdAt & updatedAt
+    timestamps: true, // otomatis createdAt & updatedAt
   }
 );
 
-// Catatan: Jalankan sync ini hanya saat development (jangan di production)
+// Sync hanya di development agar tidak ganggu production
 if (process.env.NODE_ENV !== "production") {
   (async () => {
     try {
-      await db.sync(); // pakai { alter: true } kalau mau update struktur
+      await db.sync({ alter: true }); // pakai alter agar update struktur tabel jika ada perubahan
       console.log("✅ users table synced");
     } catch (err) {
       console.error("❌ Sync error:", err);
@@ -44,4 +44,4 @@ if (process.env.NODE_ENV !== "production") {
   })();
 }
 
-module.exports = User;
+export default User;
