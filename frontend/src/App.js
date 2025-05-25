@@ -1,51 +1,82 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import PrivateRoute from "./components/PrivateRoute";  
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import UserList from "./components/UserList";
-import AddUser from "./components/AddUser";
-import EditUser from "./components/EditUser";
+import React, { useState } from "react";
+import LoginForm from "./components/LoginForm.js";
+import RegisterForm from "./components/RegisterForm.js";
+import UserList from "./components/UserList.js";
+import AddUser from "./components/AddUser.js";
+import EditUser from "./components/EditUser.js";
+import LogoutButton from "./components/LogoutButton.js";
+import PrivateRoutes from "./components/PrivateRoutes.js";
 
-function App() {
+export default function App() {
+  const [page, setPage] = useState("login"); // login, register, users, addUser, editUser
+  const [editingUserId, setEditingUserId] = useState(null);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) setPage("users");
+  }, []);
+
+  const onLoginSuccess = () => setPage("users");
+  const onLogout = () => {
+    localStorage.removeItem("token");
+    setPage("login");
+  };
+  const onRegisterSuccess = () => setPage("login");
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Default route redirect ke login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+    <div style={{ padding: 20 }}>
+      {(page === "users" ||
+        page === "addUser" ||
+        page === "editUser") && <LogoutButton onLogout={onLogout} />}
 
-        {/* Public routes */}
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
+      {page === "login" && <LoginForm onLoginSuccess={onLoginSuccess} />}
+      {page === "register" && <RegisterForm onRegisterSuccess={onRegisterSuccess} />}
+      <PrivateRoutes>
+        {page === "users" && (
+          <>
+            <button onClick={() => setPage("addUser")}>Tambah Pengguna</button>
+            <UserList />
+          </>
+        )}
+        {page === "addUser" && (
+          <>
+            <button onClick={() => setPage("users")}>Kembali</button>
+            <AddUser onAdded={() => setPage("users")} />
+          </>
+        )}
+        {page === "editUser" && editingUserId && (
+          <>
+            <button onClick={() => setPage("users")}>Kembali</button>
+            <EditUser userId={editingUserId} onUpdated={() => setPage("users")} />
+          </>
+        )}
+      </PrivateRoutes>
 
-        {/* Protected routes */}
-        <Route
-          path="/users"
-          element={
-            <PrivateRoute>
-              <UserList />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/add"
-          element={
-            <PrivateRoute>
-              <AddUser />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/edit/:id"
-          element={
-            <PrivateRoute>
-              <EditUser />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+      {page !== "users" && page !== "addUser" && page !== "editUser" && (
+        <p style={{ marginTop: 20 }}>
+          {page === "login" ? (
+            <>
+              Belum punya akun?{" "}
+              <span
+                onClick={() => setPage("register")}
+                style={{ color: "blue", cursor: "pointer" }}
+              >
+                Daftar di sini
+              </span>
+            </>
+          ) : (
+            <>
+              Sudah punya akun?{" "}
+              <span
+                onClick={() => setPage("login")}
+                style={{ color: "blue", cursor: "pointer" }}
+              >
+                Login di sini
+              </span>
+            </>
+          )}
+        </p>
+      )}
+    </div>
   );
 }
-
-export default App;

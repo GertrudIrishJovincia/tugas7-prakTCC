@@ -20,8 +20,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "serve": "serve -s build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "serve": "^14.0.1"
   },
   "eslintConfig": {
     "extends": [

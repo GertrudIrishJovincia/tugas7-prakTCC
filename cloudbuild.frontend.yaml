@@ -1,5 +1,5 @@
 steps:
-  # Install dependencies
+  # Install dependencies dengan caching npm agar build lebih cepat
   - name: "gcr.io/cloud-builders/npm"
     args: ["ci"]
     dir: "frontend"
@@ -7,7 +7,7 @@ steps:
       - name: "npm-cache"
         path: /root/.npm
 
-  # Build frontend
+  # Build React app
   - name: "gcr.io/cloud-builders/npm"
     args: ["run", "build"]
     dir: "frontend"
@@ -15,11 +15,20 @@ steps:
       - name: "npm-cache"
         path: /root/.npm
 
-  # Deploy to App Engine
+  # Deploy ke App Engine
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: gcloud
-    args: ["app", "deploy", "--quiet"]
+    entrypoint: "gcloud"
+    args:
+      [
+        "app",
+        "deploy",
+        "app.yaml",
+        "--quiet",
+        "--project=YOUR_PROJECT_ID"  # opsional: ganti sesuai project ID kamu
+      ]
     dir: "frontend"
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+timeout: "1200s"  # opsional, perpanjang timeout kalau build lama

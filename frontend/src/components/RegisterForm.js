@@ -1,124 +1,136 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils";
-import 'bulma/css/bulma.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const RegisterForm = () => {
-  const [formData, setFormData] = useState({ username: "", password: "", confirmPassword: "" });
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
-  const navigate = useNavigate();
+export default function RegisterForm({ onRegisterSuccess }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("Password dan konfirmasi password harus sama");
-      setIsError(true);
-      return;
-    }
-
+    setError("");
+    setSuccess("");
     try {
-      const res = await axios.post(`${BASE_URL}/api/auth/register`, {
-        username: formData.username,
-        password: formData.password,
-      });
-      if (res.status === 201) {
-        setMessage("Registrasi berhasil! Mengarahkan ke login...");
-        setIsError(false);
-        setTimeout(() => navigate("/login"), 1500);
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL || "https://notes-backend197-174534490336.us-central1.run.app"}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Registrasi berhasil! Silakan login.");
+        setUsername("");
+        setPassword("");
+        onRegisterSuccess();
+      } else {
+        setError(data.error || "Registrasi gagal");
       }
-    } catch (err) {
-      setMessage(err.response?.data?.error || "Registrasi gagal");
-      setIsError(true);
+    } catch {
+      setError("Gagal menghubungi server");
     }
   };
 
   return (
-    <div className="container mt-6">
-      <div className="column is-half is-offset-one-quarter">
-        <div className="box p-5">
-          <h2 className="title is-3 has-text-centered has-text-info">
-            <i className="fas fa-user-plus mr-2"></i> Daftar Admin Baru
-          </h2>
-
-          {message && (
-            <div className={`notification ${isError ? "is-danger" : "is-success"}`}>{message}</div>
-          )}
-
-          <form onSubmit={handleRegister}>
-            <div className="field">
-              <label className="label">Username</label>
-              <div className="control has-icons-left">
-                <input
-                  className="input"
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Masukkan username"
-                  required
-                  autoFocus
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-user-circle"></i>
-                </span>
-              </div>
-            </div>
-
-            <div className="field">
-              <label className="label">Password</label>
-              <div className="control has-icons-left">
-                <input
-                  className="input"
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Masukkan password"
-                  required
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-lock"></i>
-                </span>
-              </div>
-            </div>
-
-            <div className="field">
-              <label className="label">Confirm Password</label>
-              <div className="control has-icons-left">
-                <input
-                  className="input"
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Konfirmasi password"
-                  required
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-lock"></i>
-                </span>
-              </div>
-            </div>
-
-            <div className="field mt-5">
-              <button type="submit" className="button is-info is-fullwidth">
-                Register
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <form
+      onSubmit={handleSubmit}
+      style={{
+        maxWidth: 400,
+        margin: "40px auto",
+        padding: 30,
+        backgroundColor: "#ffffff",
+        borderRadius: 12,
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      }}
+    >
+      <h2 style={{ color: "#1a237e", textAlign: "center", marginBottom: 25 }}>
+        Register
+      </h2>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+        style={{
+          width: "100%",
+          padding: "12px 15px",
+          marginBottom: 20,
+          borderRadius: 6,
+          border: "1.5px solid #1565c0",
+          fontSize: 16,
+          outline: "none",
+          transition: "border-color 0.3s ease",
+        }}
+        onFocus={(e) => (e.target.style.borderColor = "#0d47a1")}
+        onBlur={(e) => (e.target.style.borderColor = "#1565c0")}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        style={{
+          width: "100%",
+          padding: "12px 15px",
+          marginBottom: 30,
+          borderRadius: 6,
+          border: "1.5px solid #1565c0",
+          fontSize: 16,
+          outline: "none",
+          transition: "border-color 0.3s ease",
+        }}
+        onFocus={(e) => (e.target.style.borderColor = "#0d47a1")}
+        onBlur={(e) => (e.target.style.borderColor = "#1565c0")}
+      />
+      <button
+        type="submit"
+        style={{
+          width: "100%",
+          padding: "14px 0",
+          backgroundColor: "#d32f2f",
+          color: "white",
+          border: "none",
+          borderRadius: 8,
+          fontWeight: "bold",
+          fontSize: 18,
+          cursor: "pointer",
+          boxShadow: "0 3px 8px rgba(211, 47, 47, 0.5)",
+          transition: "background-color 0.3s ease",
+        }}
+        onMouseEnter={(e) => (e.target.style.backgroundColor = "#b71c1c")}
+        onMouseLeave={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+      >
+        Daftar
+      </button>
+      {error && (
+        <p
+          style={{
+            marginTop: 20,
+            color: "#b00020",
+            fontWeight: "600",
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </p>
+      )}
+      {success && (
+        <p
+          style={{
+            marginTop: 20,
+            color: "#2e7d32",
+            fontWeight: "600",
+            textAlign: "center",
+          }}
+        >
+          {success}
+        </p>
+      )}
+    </form>
   );
-};
-
-export default RegisterForm;
+}

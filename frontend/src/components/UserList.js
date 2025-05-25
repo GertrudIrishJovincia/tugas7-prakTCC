@@ -1,71 +1,51 @@
-import React, {useState, useEffect} from 'react'
-import axios from "axios";
-import { Link } from 'react-router-dom';
-//import { deleteUser } from '../../../backend/controllers/UserController';
-import { BASE_URL } from "../utils";
+import React, { useEffect, useState } from "react";
+import { apiFetch } from "../utils.js";
 
-const UserList = () => {
-const[users, setUser] = useState([]);
+export default function UserList() {
+  const [notes, setNotes] = useState([]);
+  const [error, setError] = useState("");
 
-useEffect(()=>{
-    getUsers();
-},[]);
-
-const getUsers = async () =>{
-    const response = await axios.get(`${BASE_URL}/users`); 
-    setUser(response.data);
-};
-
-const deleteUser = async(id) =>{
-    try{
-        await axios.delete(`${BASE_URL}/users/${id}`);
-        getUsers();
-    } catch(error){
-        console.log(error);
+  useEffect(() => {
+    async function fetchNotes() {
+      try {
+        const data = await apiFetch("/api/users"); // endpoint backend yang mengembalikan catatan
+        setNotes(data);
+      } catch (err) {
+        setError("Gagal memuat data catatan.");
+      }
     }
-}
+    fetchNotes();
+  }, []);
 
-const formatDate = (isoDate) => {
-    const dateObj = new Date(isoDate);
-    return dateObj.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    });
-};
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="columns mt-5 is-centered">
-        <div className="column is-half">
-            <Link to={`add`} className='button is-success'>Add Notes</Link>
-            <table className='table is-striped is-fullwidth'>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Date</th>
-                        <th>Title</th>
-                        <th>Content</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user, index) => (
-                        <tr key={user.id}>
-                        <td>{index +1}</td>
-                        <td>{formatDate(user.date)}</td>
-                        <td>{user.title}</td>
-                        <td>{user.content}</td>
-                        <td>
-                            <Link to={`edit/${user.id}`} className='button is-small is-info'>Edit</Link>
-                            <button onClick={()=> deleteUser(user.id)} className='button is-small is-danger'>Delete</button>
-                        </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+    <div style={{ backgroundColor: "#a8e063", padding: 20, borderRadius: 10 }}>
+      <h2 style={{ color: "#4a7023" }}>Daftar Catatan</h2>
+      {notes.length === 0 ? (
+        <p style={{ color: "#2e4600" }}>Tidak ada catatan.</p>
+      ) : (
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          {notes.map((note) => (
+            <li
+              key={note.id}
+              style={{
+                backgroundColor: "#e9f7d5",
+                marginBottom: 12,
+                padding: 15,
+                borderRadius: 8,
+                boxShadow: "0 0 6px #a8e063aa",
+              }}
+            >
+              <h3 style={{ margin: "0 0 6px 0", color: "#3a5f0b" }}>{note.title}</h3>
+              <small style={{ color: "#4a7023" }}>
+                {new Date(note.date).toLocaleString()}
+              </small>
+              <p style={{ marginTop: 8, color: "#2e4600" }}>{note.content}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
-  )
+  );
 }
-
-export default UserList
