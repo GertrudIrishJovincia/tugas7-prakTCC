@@ -1,3 +1,7 @@
+import React, { useState } from "react";
+import LoginForm from "../LoginForm";
+import RegisterForm from "../RegisterForm";
+
 export default function AuthCard({ onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { apiFetch } from "../utils.js";
 
 const inputStyle = {
@@ -26,7 +27,10 @@ const buttonStyle = {
   transition: "background-color 0.3s ease",
 };
 
-export default function EditNote({ noteId, onUpdated }) {
+export default function EditUser() {
+  const { id: noteId } = useParams();
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
@@ -54,7 +58,7 @@ export default function EditNote({ noteId, onUpdated }) {
         method: "PATCH",
         body: JSON.stringify({ title, content }),
       });
-      onUpdated();
+      navigate("/"); // kembali ke list setelah update berhasil
     } catch (err) {
       setError(err.message || "Terjadi kesalahan");
     } finally {
