@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import AuthCard from "./components/auth/AuthCard";
 import UserList from "./components/UserList";
@@ -10,7 +10,11 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Tampilkan tombol Kembali hanya jika user sudah login dan path bukan "/"
+  // State untuk trigger refresh daftar catatan
+  const [refreshFlag, setRefreshFlag] = useState(false);
+  const triggerRefresh = () => setRefreshFlag(prev => !prev);
+
+  // Tampilkan tombol Kembali hanya jika sudah login dan bukan di halaman "/"
   const showBackButton = token && location.pathname !== "/";
 
   return (
@@ -65,19 +69,35 @@ function AppContent() {
       <Routes>
         <Route
           path="/login"
-          element={!token ? <AuthCard onLoginSuccess={() => navigate("/")} /> : <Navigate to="/" />}
+          element={
+            !token
+              ? <AuthCard onLoginSuccess={() => navigate("/")} />
+              : <Navigate to="/" />
+          }
         />
         <Route
           path="/"
-          element={token ? <UserList /> : <Navigate to="/login" />}
+          element={
+            token
+              ? <UserList refreshFlag={refreshFlag} />
+              : <Navigate to="/login" />
+          }
         />
         <Route
           path="/add"
-          element={token ? <AddUser /> : <Navigate to="/login" />}
+          element={
+            token
+              ? <AddUser onAdded={() => { triggerRefresh(); navigate("/"); }} />
+              : <Navigate to="/login" />
+          }
         />
         <Route
           path="/edit/:id"
-          element={token ? <EditUser /> : <Navigate to="/login" />}
+          element={
+            token
+              ? <EditUser onUpdated={() => { triggerRefresh(); navigate("/"); }} />
+              : <Navigate to="/login" />
+          }
         />
         <Route
           path="*"
