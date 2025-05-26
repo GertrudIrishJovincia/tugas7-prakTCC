@@ -21,7 +21,7 @@ Content-Type: application/json
 ###
 
 ### 🔑 GANTI TOKEN DI SINI SETELAH LOGIN
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzQ4MjQ4ODI2LCJleHAiOjE3NDgzMzUyMjZ9.hoJ_fkjmTbUVuRKJlgEBOzEMbZhBBXBnRcUD8Vx9EDk
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzQ4MjYxMDQ3LCJleHAiOjE3NDgzNDc0NDd9.oxxyRWPrJWhyqFCALgQywOCjD71C8rNgdPf1nNc4ycI
 
 ###
 

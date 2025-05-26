@@ -33,23 +33,27 @@ export default function AddNote({ onAdded }) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      await apiFetch("/api/users", {
-        method: "POST",
-        body: JSON.stringify({ title, content }),
-      });
-      onAdded();
-      setTitle("");
-      setContent("");
-    } catch (err) {
-      setError(err.message || "Terjadi kesalahan");
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setError("");
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("token");
+    await apiFetch("/api/users", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title, content }),
+    });
+    onAdded();
+    setTitle("");
+    setContent("");
+  } catch (err) {
+    setError(err.message || "Terjadi kesalahan");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <form
