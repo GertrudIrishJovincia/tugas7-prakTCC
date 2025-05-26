@@ -37,7 +37,7 @@ export default function AddNote({ onAdded }) {
     setError("");
     setLoading(true);
     try {
-      await apiFetch("/api/notes", {
+      await apiFetch("/api/users", {
         method: "POST",
         body: JSON.stringify({ title, content }),
       });
