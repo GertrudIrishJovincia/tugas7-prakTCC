@@ -39,7 +39,7 @@ export default function EditUser() {
   useEffect(() => {
     async function loadNote() {
       try {
-        const data = await apiFetch(`/api/notes/${noteId}`);
+        const data = await apiFetch(`/api/users/${noteId}`);
         setTitle(data.title);
         setContent(data.content);
       } catch {
@@ -54,7 +54,7 @@ export default function EditUser() {
     setError("");
     setLoading(true);
     try {
-      await apiFetch(`/api/notes/${noteId}`, {
+      await apiFetch(`/api/users/${noteId}`, {
         method: "PATCH",
         body: JSON.stringify({ title, content }),
       });
