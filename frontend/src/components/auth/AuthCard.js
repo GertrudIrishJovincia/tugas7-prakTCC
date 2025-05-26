@@ -1,8 +1,4 @@
-import React, { useState } from "react";
-import LoginForm from "../LoginForm";
-import RegisterForm from "../RegisterForm";
-
-export default function AuthCard() {
+export default function AuthCard({ onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
 
   const toggleForm = (showLogin) => {
@@ -23,7 +19,7 @@ export default function AuthCard() {
     >
       {isLogin ? (
         <>
-          <LoginForm onLoginSuccess={() => alert("Login sukses")} />
+          <LoginForm onLoginSuccess={onLoginSuccess} />
           <div
             style={{ marginTop: 20, textAlign: "center", cursor: "pointer" }}
             onClick={() => toggleForm(false)}
