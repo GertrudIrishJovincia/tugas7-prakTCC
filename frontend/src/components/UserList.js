@@ -1,21 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { apiFetch } from "../utils.js";
+import { apiFetch, BASE_URL } from "../utils.js"; // pastikan ada BASE_URL
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function UserList() {
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchNotes() {
-      try {
-        const data = await apiFetch("/api/users");
-        setNotes(data);
-      } catch (err) {
-        setError("Gagal memuat data catatan.");
-      }
-    }
     fetchNotes();
   }, []);
+
+  async function fetchNotes() {
+    try {
+      const data = await apiFetch("/api/users");
+      setNotes(data);
+    } catch (err) {
+      setError("Gagal memuat data catatan.");
+    }
+  }
+
+  // Fungsi hapus catatan
+  async function deleteNote(id) {
+    if (!window.confirm("Yakin ingin menghapus catatan ini?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${BASE_URL}/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Refresh data setelah hapus
+      fetchNotes();
+    } catch (err) {
+      alert("Gagal menghapus catatan.");
+    }
+  }
 
   if (error)
     return (
@@ -73,6 +92,7 @@ export default function UserList() {
                 padding: 20,
                 borderRadius: 8,
                 boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                position: "relative",
               }}
             >
               <h3
@@ -93,6 +113,54 @@ export default function UserList() {
                 {new Date(note.date).toLocaleString()}
               </small>
               <p style={{ marginTop: 12, color: "#444" }}>{note.content}</p>
+
+              {/* Tombol Edit dan Delete */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 15,
+                  right: 15,
+                  display: "flex",
+                  gap: 10,
+                }}
+              >
+                <Link
+                  to={`/edit/${note.id}`}
+                  style={{
+                    padding: "6px 12px",
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                    borderRadius: 6,
+                    fontWeight: "600",
+                    fontSize: 14,
+                    textDecoration: "none",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 6px rgba(25, 118, 210, 0.4)",
+                  }}
+                  onMouseEnter={(e) => (e.target.style.backgroundColor = "#115293")}
+                  onMouseLeave={(e) => (e.target.style.backgroundColor = "#1976d2")}
+                >
+                  Edit
+                </Link>
+                <button
+                  onClick={() => deleteNote(note.id)}
+                  style={{
+                    padding: "6px 12px",
+                    backgroundColor: "#d32f2f",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 6,
+                    fontWeight: "600",
+                    fontSize: 14,
+                    cursor: "pointer",
+                    boxShadow: "0 2px 6px rgba(211, 47, 47, 0.4)",
+                  }}
+                  onMouseEnter={(e) => (e.target.style.backgroundColor = "#9a1b1b")}
+                  onMouseLeave={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+                >
+                  Hapus
+                </button>
+              </div>
             </li>
           ))}
         </ul>
