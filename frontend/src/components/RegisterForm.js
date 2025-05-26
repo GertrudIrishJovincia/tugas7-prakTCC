@@ -1,15 +1,42 @@
 import React, { useState } from "react";
 
+const inputStyle = {
+  width: "100%",
+  padding: "12px 15px",
+  marginBottom: 20,
+  borderRadius: 6,
+  border: "1.5px solid #1565c0",
+  fontSize: 16,
+  outline: "none",
+  transition: "border-color 0.3s ease",
+};
+
+const buttonStyle = {
+  width: "100%",
+  padding: "14px 0",
+  backgroundColor: "#1976d2",
+  color: "white",
+  border: "none",
+  borderRadius: 8,
+  fontWeight: "bold",
+  fontSize: 18,
+  cursor: "pointer",
+  boxShadow: "0 3px 8px rgba(25, 118, 210, 0.5)",
+  transition: "background-color 0.3s ease",
+};
+
 export default function RegisterForm({ onRegisterSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setLoading(true);
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_BASE_URL || "https://notes-backend197-174534490336.us-central1.run.app"}/api/auth/register`,
@@ -26,26 +53,17 @@ export default function RegisterForm({ onRegisterSuccess }) {
         setPassword("");
         onRegisterSuccess();
       } else {
-        setError(data.error || "Registrasi gagal");
+        setError(data.error || data.message || "Registrasi gagal");
       }
     } catch {
       setError("Gagal menghubungi server");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        maxWidth: 400,
-        margin: "40px auto",
-        padding: 30,
-        backgroundColor: "#ffffff",
-        borderRadius: 12,
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      }}
-    >
+    <form onSubmit={handleSubmit}>
       <h2 style={{ color: "#1a237e", textAlign: "center", marginBottom: 25 }}>
         Register
       </h2>
@@ -55,18 +73,10 @@ export default function RegisterForm({ onRegisterSuccess }) {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         required
-        style={{
-          width: "100%",
-          padding: "12px 15px",
-          marginBottom: 20,
-          borderRadius: 6,
-          border: "1.5px solid #1565c0",
-          fontSize: 16,
-          outline: "none",
-          transition: "border-color 0.3s ease",
-        }}
+        style={inputStyle}
         onFocus={(e) => (e.target.style.borderColor = "#0d47a1")}
         onBlur={(e) => (e.target.style.borderColor = "#1565c0")}
+        disabled={loading}
       />
       <input
         type="password"
@@ -74,39 +84,42 @@ export default function RegisterForm({ onRegisterSuccess }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-        style={{
-          width: "100%",
-          padding: "12px 15px",
-          marginBottom: 30,
-          borderRadius: 6,
-          border: "1.5px solid #1565c0",
-          fontSize: 16,
-          outline: "none",
-          transition: "border-color 0.3s ease",
-        }}
+        style={{ ...inputStyle, marginBottom: 30 }}
         onFocus={(e) => (e.target.style.borderColor = "#0d47a1")}
         onBlur={(e) => (e.target.style.borderColor = "#1565c0")}
+        disabled={loading}
       />
       <button
         type="submit"
         style={{
-          width: "100%",
-          padding: "14px 0",
-          backgroundColor: "#d32f2f",
-          color: "white",
-          border: "none",
-          borderRadius: 8,
-          fontWeight: "bold",
-          fontSize: 18,
-          cursor: "pointer",
-          boxShadow: "0 3px 8px rgba(211, 47, 47, 0.5)",
-          transition: "background-color 0.3s ease",
+          ...buttonStyle,
+          backgroundColor: loading ? "#115293" : buttonStyle.backgroundColor,
+          cursor: loading ? "not-allowed" : buttonStyle.cursor,
         }}
-        onMouseEnter={(e) => (e.target.style.backgroundColor = "#b71c1c")}
-        onMouseLeave={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+        disabled={loading}
+        onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = "#115293")}
+        onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = "#1976d2")}
       >
-        Daftar
+        {loading ? "Memproses..." : "Daftar"}
       </button>
+
+      {/* <div
+        style={{
+          marginTop: 20,
+          textAlign: "center",
+          fontSize: 14,
+          color: "#333",
+        }}
+      >
+        Sudah punya akun?{" "}
+        <span
+          onClick={() => onRegisterSuccess(false)} // nanti onRegisterSuccess dipakai toggle di parent
+          style={{ color: "#1565c0", textDecoration: "underline", cursor: "pointer" }}
+        >
+          Login di sini
+        </span>
+      </div> */}
+
       {error && (
         <p
           style={{
@@ -119,6 +132,7 @@ export default function RegisterForm({ onRegisterSuccess }) {
           {error}
         </p>
       )}
+
       {success && (
         <p
           style={{

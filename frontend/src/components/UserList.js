@@ -8,7 +8,7 @@ export default function UserList() {
   useEffect(() => {
     async function fetchNotes() {
       try {
-        const data = await apiFetch("/api/users"); // endpoint backend yang mengembalikan catatan
+        const data = await apiFetch("/api/users");
         setNotes(data);
       } catch (err) {
         setError("Gagal memuat data catatan.");
@@ -17,31 +17,82 @@ export default function UserList() {
     fetchNotes();
   }, []);
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (error)
+    return (
+      <p
+        style={{
+          color: "#b00020",
+          fontWeight: "600",
+          textAlign: "center",
+          marginTop: 20,
+        }}
+      >
+        {error}
+      </p>
+    );
 
   return (
-    <div style={{ backgroundColor: "#a8e063", padding: 20, borderRadius: 10 }}>
-      <h2 style={{ color: "#4a7023" }}>Daftar Catatan</h2>
+    <div
+      style={{
+        maxWidth: 480,
+        margin: "40px auto",
+        padding: 30,
+        backgroundColor: "#ffffff",
+        borderRadius: 12,
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        color: "#1a237e",
+      }}
+    >
+      <h2 style={{ textAlign: "center", marginBottom: 25 }}>Daftar Catatan</h2>
       {notes.length === 0 ? (
-        <p style={{ color: "#2e4600" }}>Tidak ada catatan.</p>
+        <p
+          style={{
+            color: "#4a7023",
+            fontWeight: "500",
+            textAlign: "center",
+            marginTop: 20,
+          }}
+        >
+          Tidak ada catatan.
+        </p>
       ) : (
-        <ul style={{ listStyleType: "none", padding: 0 }}>
+        <ul
+          style={{
+            listStyleType: "none",
+            padding: 0,
+            margin: 0,
+          }}
+        >
           {notes.map((note) => (
             <li
               key={note.id}
               style={{
-                backgroundColor: "#e9f7d5",
-                marginBottom: 12,
-                padding: 15,
+                backgroundColor: "#f9f9f9",
+                marginBottom: 15,
+                padding: 20,
                 borderRadius: 8,
-                boxShadow: "0 0 6px #a8e063aa",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
               }}
             >
-              <h3 style={{ margin: "0 0 6px 0", color: "#3a5f0b" }}>{note.title}</h3>
-              <small style={{ color: "#4a7023" }}>
+              <h3
+                style={{
+                  margin: "0 0 8px 0",
+                  color: "#1565c0",
+                  fontWeight: "600",
+                }}
+              >
+                {note.title}
+              </h3>
+              <small
+                style={{
+                  color: "#1565c0",
+                  fontWeight: "500",
+                }}
+              >
                 {new Date(note.date).toLocaleString()}
               </small>
-              <p style={{ marginTop: 8, color: "#2e4600" }}>{note.content}</p>
+              <p style={{ marginTop: 12, color: "#444" }}>{note.content}</p>
             </li>
           ))}
         </ul>
