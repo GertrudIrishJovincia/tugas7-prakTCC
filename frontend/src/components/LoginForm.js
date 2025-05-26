@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const inputStyle = {
   width: "100%",
@@ -25,11 +26,12 @@ const buttonStyle = {
   transition: "background-color 0.3s ease",
 };
 
-export default function LoginForm({ onLoginSuccess }) {
+export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function LoginForm({ onLoginSuccess }) {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        onLoginSuccess();
+        navigate("/"); // pindah ke halaman utama (UserList)
       } else {
         setError(data.error || "Login gagal");
       }
