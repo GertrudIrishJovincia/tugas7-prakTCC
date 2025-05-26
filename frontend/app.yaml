@@ -3,16 +3,14 @@ service: frontend-197
 instance_class: F1
 
 handlers:
-  - url: /
-    static_files: build/index.html
-    upload: build/index.html
-
-  - url: /(.*)
+  # Serve static assets (js, css, images, fonts, dll)
+  - url: /(.*\.(js|css|png|jpg|jpeg|gif|svg|ico|json|woff2?|ttf|eot|map))$
     static_files: build/\1
-    upload: build/(.*)
+    upload: build/.*\.(js|css|png|jpg|jpeg|gif|svg|ico|json|woff2?|ttf|eot|map)$
 
+  # Fallback all other URLs to index.html (for React Router)
   - url: /.*
     static_files: build/index.html
     upload: build/index.html
 
-default_expiration: '1h'
+default_expiration: "1h"
